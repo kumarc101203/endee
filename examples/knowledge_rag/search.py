@@ -40,7 +40,7 @@ query_embedding = model.encode(query).tolist()
 # -----------------------
 results = index.query(
     vector=query_embedding,
-    top_k=3
+    top_k=5
 )
 
 print("\nRetrieved Context:\n")

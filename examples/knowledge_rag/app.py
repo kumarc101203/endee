@@ -67,7 +67,7 @@ if query:
             # Vector search
             results = index.query(
                 vector=query_embedding,
-                top_k=3
+                top_k=5
             )
 
             context = [r["meta"]["text"] for r in results]
