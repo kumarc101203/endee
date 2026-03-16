@@ -1,4 +1,5 @@
 import os
+import re
 from endee import Endee, Precision
 from sentence_transformers import SentenceTransformer
 
@@ -7,6 +8,7 @@ DOCS_PATH = "data/docs"
 
 client = Endee()
 
+# ---------- Create index if not exists ----------
 try:
     client.create_index(
         name=INDEX,
@@ -24,6 +26,7 @@ print("Loading embedding model...")
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
+# ---------- Chunking function ----------
 def chunk_text(text, size=600):
     chunks = []
     start = 0
@@ -37,6 +40,7 @@ def chunk_text(text, size=600):
 
 
 documents = []
+sources = []
 
 print("Reading documentation files...")
 
@@ -49,16 +53,32 @@ for file in os.listdir(DOCS_PATH):
         with open(path, "r", encoding="utf-8") as f:
             text = f.read()
 
+        # ---------- Clean markdown ----------
+        text = re.sub(r'`+', '', text)
+        text = re.sub(r'\|', ' ', text)
+        text = re.sub(r'#', ' ', text)
+        text = re.sub(r'\s+', ' ', text)
+
         chunks = chunk_text(text)
 
         for chunk in chunks:
-            documents.append(chunk)
+
+            chunk = chunk.strip()
+
+            # ignore very small fragments
+            if len(chunk) > 120:
+                documents.append(chunk)
+                sources.append(file)
 
 print("Total chunks:", len(documents))
 
+
+# ---------- Generate embeddings ----------
 print("Generating embeddings...")
 embeddings = model.encode(documents)
 
+
+# ---------- Prepare items ----------
 items = []
 
 for i, emb in enumerate(embeddings):
@@ -66,9 +86,14 @@ for i, emb in enumerate(embeddings):
     items.append({
         "id": f"doc{i}",
         "vector": emb.tolist(),
-        "meta": {"text": documents[i]}
+        "meta": {
+            "text": documents[i],
+            "source": sources[i]
+        }
     })
 
+
+# ---------- Upload to Endee ----------
 print("Uploading vectors...")
 
 index.upsert(items)
