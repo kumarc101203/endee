@@ -1,59 +1,105 @@
-# Endee RAG Knowledge Assistant
+# Endee Documentation AI Assistant
 
-## Project Overview
 This project demonstrates a Retrieval-Augmented Generation (RAG) system built using the Endee vector database.
 
-The system allows users to upload documents and ask questions about them. Relevant document chunks are retrieved using vector similarity search in Endee.
+The application allows users to ask questions about Endee documentation and receive AI-generated answers based on retrieved context.
 
-## Architecture
+---
 
-Documents
-↓
-Embedding Model (Sentence Transformers)
-↓
-Endee Vector Database
-↓
-Similarity Search
-↓
-LLM Response
+## Project Overview
 
-## Environment Setup
+This project combines:
 
-### 1. Fork Repository
-Forked from:
-https://github.com/endee-io/endee
+- Endee Vector Database
+- Sentence Transformers Embedding Model
+- Retrieval-Augmented Generation (RAG)
+- Groq LLM API
+- Streamlit Web Interface
 
-### 2. Start Endee Server
+The assistant retrieves relevant documentation from a vector database and uses a large language model to generate answers.
 
-docker run \
---ulimit nofile=100000:100000 \
--p 8080:8080 \
--v ./endee-data:/data \
---name endee-server \
---restart unless-stopped \
-endeeio/endee-server:latest
+---
 
-Server runs at:
-http://localhost:8080
+## System Architecture
 
-### 3. Python Environment
+User Question  
+↓  
+Embedding Model (Sentence Transformers)  
+↓  
+Endee Vector Database  
+↓  
+Top-K Context Retrieval  
+↓  
+LLM (Groq / Llama3)  
+↓  
+Generated Answer  
+↓  
+Streamlit Web UI
 
+---
+
+## Features
+
+- Semantic search over Endee documentation
+- Vector similarity search using Endee
+- Retrieval-Augmented Generation pipeline
+- Interactive web interface with Streamlit
+- Docker and API documentation retrieval
+
+---
+
+## Technologies Used
+
+- Python
+- Endee Vector Database
+- Sentence Transformers
+- Streamlit
+- Groq LLM API
+
+---
+
+## Setup Instructions
+
+### 1. Clone the repository
+https://github.com/kumarc101203/endee
+cd endee/examples/knowledge_rag
+
+
+### 2. Create virtual environment
 python -m venv venv
 venv\Scripts\activate
 
-### 4. Install Dependencies
 
+### 3. Install dependencies
 pip install -r requirements.txt
 
-## Current Progress
 
-✔ Endee server running  
-✔ Python environment configured  
-✔ RAG project structure created  
+### 4. Start Endee server
+docker run --ulimit nofile=100000:100000 -p 8080:8080 -v ./endee-data:/data endeeio/endee-server:latest
 
-## Next Steps
 
-- Implement document ingestion pipeline
-- Generate embeddings
-- Insert vectors into Endee
-- Build retrieval interface
+### 5. Ingest documentation
+python ingest.py
+
+
+### 6. Run AI assistant
+streamlit run app.py
+
+
+---
+
+## Example Queries
+
+- How does Endee run with Docker?
+- What is a vector database?
+- How do you create an index in Endee?
+- How does vector similarity search work?
+
+---
+
+## Use Cases
+
+- Documentation assistants
+- Semantic search systems
+- AI chatbots over knowledge bases
+- Retrieval-Augmented Generation pipelines
