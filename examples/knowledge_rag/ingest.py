@@ -21,15 +21,12 @@ index = client.get_index(INDEX)
 print("Loading embedding model...")
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-docs = [
-    "Endee is a high performance vector database for AI search.",
-    "Vector databases enable semantic search systems.",
-    "Retrieval augmented generation improves LLM answers.",
-    "Embeddings convert text into numerical vectors."
-]
+# Load documents from file
+with open("data/endee_docs.txt", "r", encoding="utf-8") as f:
+    documents = [line.strip() for line in f.readlines() if line.strip()]
 
 print("Generating embeddings...")
-embeddings = model.encode(docs)
+embeddings = model.encode(documents)
 
 print("Uploading vectors...")
 
@@ -39,7 +36,7 @@ for i, emb in enumerate(embeddings):
     items.append({
         "id": f"doc{i}",
         "vector": emb.tolist(),
-        "meta": {"text": docs[i]}
+        "meta": {"text": documents[i]}
     })
 
 index.upsert(items)
